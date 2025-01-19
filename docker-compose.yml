@@ -1,0 +1,10 @@
+version: "3.9" # Specifies the version of Docker Compose syntax
+
+services:
+  nginx: # Defines the NGINX service
+    build:
+      context: ./srcs/nginx # Path to the Dockerfile for NGINX service
+    ports:
+      - "8080:80" # Maps port 8080 on the host to port 80 in the container
+    volumes:
+      - ./conf/nginx:/srcs/nginx/sites-available  # Mounts the configuration file from 'conf/nginx' to the container's NGINX directory
