@@ -5,7 +5,7 @@ DATA_DIR = $(HOME)/data
 all:
 	@mkdir -p $(DATA_DIR)/wordpress
 	@mkdir -p $(DATA_DIR)/mariadb
-	@$(DOCKER_COMPOSE) up -d
+	@$(DOCKER_COMPOSE) up
 
 # Stop and remove containers, networks, and optionally anonymous volumes
 down:
@@ -19,25 +19,24 @@ stop:
 start:
 	@$(DOCKER_COMPOSE) start
 
-# Display the status of the containers in the docker-compose project
+# Display all running Docker containers
 status:
-	@$(DOCKER_COMPOSE) ps
+	@docker ps
 
 # Rebuild and start the Docker containers
 re:
-	@$(DOCKER_COMPOSE) down
-	@$(DOCKER_COMPOSE) up --build -d
+	@$(DOCKER_COMPOSE) up --build
 
-# Stop running containers, remove all containers, Docker images, volumes, and networks
+# Stop running containers, remove all containers, Docker images, volumes and networks
 clean:
-	@docker stop $$(docker ps -qa) 2>/dev/null || true; \
-	docker rm $$(docker ps -qa) 2>/dev/null || true; \
-	docker rmi -f $$(docker images -qa) 2>/dev/null || true; \
-	docker volume rm $$(docker volume ls -q) 2>/dev/null || true; \
-	docker network rm $$(docker network ls -q) 2>/dev/null || true; \
+	@docker stop $$(docker ps -qa); \
+	docker rm $$(docker ps -qa); \
+	docker rmi -f $$(docker images -qa); \
+	docker volume rm $$(docker volume ls -q); \
+	docker network rm $$(docker network ls -q); \
 	rm -rf $(DATA_DIR)/wordpress; \
 	rm -rf $(DATA_DIR)/mariadb
 
-fclean: down clean
+fclean: stop down clean
 
-.PHONY: all down stop start status re clean fclean
+.PHONY: all down stop start status re clean
