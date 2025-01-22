@@ -1,0 +1,61 @@
+version: "3.5" # Docker Compose file format version.
+
+# Define custom networks for container communication.
+networks:
+  inception:
+    name: inception # Custom network name to ensure consistent naming across containers.
+
+# Define volumes for persistent data storage.
+volumes:
+  wp:
+    driver: local # Use local storage for the WordPress volume.
+    name: wp # Custom volume name for consistency.
+    driver_opts:
+      type: none # Bind a host directory as the volume.
+      o: bind # Mount as a bind volume for host-container data synchronization.
+      device: /$HOME/data/wordpress # Host directory for WordPress data.
+  db:
+    driver: local # Use local storage for the MariaDB volume.
+    name: db # Custom volume name for consistency.
+    driver_opts:
+      type: none # Bind a host directory as the volume.
+      o: bind # Mount as a bind volume for host-container data synchronization.
+      device: /$HOME/data/mariadb # Host directory for database data.
+
+services:
+  mariadb: # MariaDB database service configuration.
+    container_name: mariadb # Fixed container name for easier management.
+    build: ./requirements/mariadb # Build the container using the Dockerfile in the specified directory.
+    env_file:
+      - .env # Load environment variables from the `.env` file.
+    volumes:
+      - db:/var/lib/mysql # Mount the `db` volume to store database files persistently.
+    networks:
+      - inception # Attach this service to the custom `inception` network.
+    restart: unless-stopped # Automatically restart the container unless explicitly stopped.
+
+  wordpress: # WordPress application service configuration.
+    container_name: wordpress # Fixed container name for easier management.
+    build: ./requirements/wordpress # Build the container using the Dockerfile in the specified directory.
+    env_file:
+      - .env # Load environment variables from the `.env` file for WordPress setup.
+    depends_on:
+      - mariadb # Ensure MariaDB is running before starting WordPress.
+    volumes:
+      - wp:/var/www/html # Mount the `wp` volume to persist WordPress files and uploads.
+    networks:
+      - inception # Attach this service to the custom `inception` network.
+    restart: unless-stopped # Automatically restart the container unless explicitly stopped.
+
+  nginx: # NGINX web server service configuration.
+    container_name: nginx # Fixed container name for easier management.
+    build: ./requirements/nginx # Build the container using the Dockerfile in the specified directory.
+    ports:
+      - "443:443" # Expose HTTPS traffic on port 443 to the host system.
+    depends_on:
+      - wordpress # Ensure WordPress is running before starting NGINX.
+    volumes:
+      - wp:/var/www/html # Mount the `wp` volume for NGINX to serve WordPress files.
+    networks:
+      - inception # Attach this service to the custom `inception` network.
+    restart: unless-stopped # Automatically restart the container unless explicitly stopped.
