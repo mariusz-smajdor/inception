@@ -1,0 +1,14 @@
+[mysqld]
+user = mysql                             # User under which the MySQL server will run
+pid-file = /run/mysqld/mysqld.pid        # Location of the file storing the server's process ID
+socket = /run/mysqld/mysqld.sock         # Unix socket file for local connections
+port = 3306                              # Port on which the MySQL server listens for connections
+basedir = /usr                           # Base directory of the MySQL installation
+datadir = /var/lib/mysql                 # Directory where MySQL stores data
+tmpdir = /tmp                            # Directory for temporary files
+lc-messages-dir = /usr/share/mysql       # Directory for localization files
+query_cache_size = 16M                   # Size of the query cache (used for speeding up repeated queries)
+log_error = /var/log/mysql/error.log     # Path to the error log file
+expire_logs_days = 10                    # Number of days before binary log files are automatically deleted
+character-set-server = utf8mb4           # Default character set for the server
+collation-server = utf8mb4_general_ci    # Default collation (sorting rules) for the server
