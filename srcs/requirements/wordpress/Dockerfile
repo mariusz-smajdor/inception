@@ -23,10 +23,10 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     mv wp-cli.phar /usr/local/bin/wp
 
 # Copy the WordPress setup script
-COPY ./tools/wordpress_start.sh .
+COPY ./tools/wordpress_start.sh /
 
 # Make the script executable
-RUN chmod +x wordpress_start.sh
+RUN chmod +x /wordpress_start.sh
 
-# Entry point for the container
-ENTRYPOINT ["bash", "wordpress_start.sh"]
+# Set the default command to run the WordPress setup script
+CMD ["/wordpress_start.sh"]

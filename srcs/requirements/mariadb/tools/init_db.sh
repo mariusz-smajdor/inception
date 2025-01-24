@@ -13,4 +13,4 @@ mysql -e "FLUSH PRIVILEGES;"
 # Shut down MySQL service cleanly
 mysql -u${DB_USER} -p${DB_PASSWORD} -e "SHUTDOWN;"
 
-exec "$@"
+mysqld
